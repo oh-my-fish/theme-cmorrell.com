@@ -3,9 +3,11 @@ function __cmrrell_has_on_parent_dirs -d "True of dir exists in parent dirs"
     return
   end
 
+  set -l d $argv[1]
   set -l p (pwd)
+
   while true
-    if [ -d $argv[1] ]
+    if [ -d "$p/$d" ]
       echo 1
       return
     end
