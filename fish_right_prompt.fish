@@ -1,4 +1,4 @@
-function __cmrrell_has_on_parent_dirs -d "True of dir exists in parent dirs"
+function __cmrrell_has_in_parent_dirs -d "True if dir exists in parent dirs"
   if [ (count $argv) != 1 ]
     return
   end
@@ -45,28 +45,36 @@ end
 
 
 function __cmorrell_get_git_status -d "Gets the current git status"
-  set -l has (__cmrrell_has_on_parent_dirs ".git")
-  if [ $has ]
-    if git rev-parse --is-inside-work-tree >/dev/null 2>&1
-      set -l dirty (git status -s --ignore-submodules=dirty | wc -l | sed -e 's/^ *//' -e 's/ *$//' 2> /dev/null)
-      set -l ref (git symbolic-ref --short HEAD 2> /dev/null ; or git rev-parse --short HEAD 2> /dev/null)
-
-      echo $dirty
-      echo $ref
-     end
+  if set -q theme_display_git; and [ $theme_display_git = "no" ]
+    return
   end
+  if [ ! (__cmrrell_has_in_parent_dirs ".git") ]
+    return
+  end
+
+  if git rev-parse --is-inside-work-tree >/dev/null 2>&1
+    set -l dirty (git status -s --ignore-submodules=dirty | wc -l | sed -e 's/^ *//' -e 's/ *$//' 2> /dev/null)
+    set -l ref (git symbolic-ref --short HEAD 2> /dev/null ; or git rev-parse --short HEAD 2> /dev/null)
+
+    echo $dirty
+    echo $ref
+   end
 end
 
 function __cmorrell_get_hg_status -d "Gets the current hg status"
-  set -l has (__cmrrell_has_on_parent_dirs ".hg")
-  if [ $has ]
-    if hg id > /dev/null 2>&1
-      set -l dirty (hg status | wc -l)
-      set -l branch (hg branch)
+  if set -q theme_display_hg; and [ $theme_display_hg = "no" ]
+    return
+  end
+  if [ ! (__cmrrell_has_in_parent_dirs ".hg") ]
+    return
+  end
 
-      echo $dirty
-      echo $branch
-    end
+  if hg id > /dev/null 2>&1
+    set -l dirty (hg status | wc -l)
+    set -l branch (hg branch)
+
+    echo $dirty
+    echo $branch
   end
 end
 
