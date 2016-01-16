@@ -28,6 +28,13 @@ function show_status -d "Function to show the current status"
     end
 end
 
+function show_virtualenv -d "Show active python virtuel environments"
+  if set -q VIRTUAL_ENV
+    set -l venvname (basename "$VIRTUAL_ENV")
+    prompt_segment normal white " ($venvname)"
+  end
+end
+
 ## Show user if not default
 function show_user -d "Show user"
   if [ "$USER" != "$default_user" -o -n "$SSH_CLIENT" ]
@@ -60,7 +67,7 @@ function show_prompt -d "Shows prompt with cue for current priv"
   else
     prompt_segment normal white " \$ "
     end
-  
+
   set_color normal
 end
 
@@ -68,6 +75,7 @@ end
 function fish_prompt
   set -g RETVAL $status
   show_status
+  show_virtualenv
   show_user
   show_pwd
   show_prompt
