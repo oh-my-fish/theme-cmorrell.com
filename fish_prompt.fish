@@ -28,7 +28,7 @@ function show_status -d "Function to show the current status"
     end
 end
 
-function show_virtualenv -d "Show active python virtuel environments"
+function show_virtualenv -d "Show active python virtual environments"
   if set -q VIRTUAL_ENV
     set -l venvname (basename "$VIRTUAL_ENV")
     prompt_segment normal white " ($venvname)"
