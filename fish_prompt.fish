@@ -51,9 +51,20 @@ function show_user -d "Show user"
   end
 end
 
+function _set_venv_project --on-variable VIRTUAL_ENV
+    if test -e $VIRTUAL_ENV/.project
+        set -g VIRTUAL_ENV_PROJECT (cat $VIRTUAL_ENV/.project)
+    end
+end
+
 # Show directory
 function show_pwd -d "Show the current directory"
-  set -l pwd (prompt_pwd)
+  set -l pwd
+  if [ (string match -r '^'"$VIRTUAL_ENV_PROJECT" $PWD) ]
+    set pwd (string replace -r '^'"$VIRTUAL_ENV_PROJECT"'($|/)' '≫ $1' $PWD)
+  else
+    set pwd (prompt_pwd)
+  end
   prompt_segment normal blue "$pad$pwd "
 end
 
